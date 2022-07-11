@@ -74,6 +74,18 @@ export function TasksList(){
         return setCheckedTodos([...checkedTodos,todoToCheck])
     }
 
+    function addTask({id,content, isChecked}:Todo){
+          return(  <Task 
+                key={id}
+                id={id}
+                isChecked={isChecked}
+                content={content}
+                onDeleteTodo={deleteTodo}
+                onCheckTodo={handleCheckTodo}
+            />
+            )
+        }
+
     return(
         <div className={styles.tasks}>
          <form 
@@ -101,16 +113,7 @@ export function TasksList(){
             </div>
             {renderTasks()}
             <div className={styles.Todos}>
-            {todos.map(({id,content, isChecked})=>
-            <Task 
-                key={id}
-                id={id}
-                isChecked={isChecked}
-                content={content}
-                onDeleteTodo={deleteTodo}
-                onCheckTodo={handleCheckTodo}
-            />
-        )}
+            {todos.map(addTask)}
             </div>
         </div>
     )
