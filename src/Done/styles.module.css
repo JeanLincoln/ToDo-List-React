@@ -1,0 +1,83 @@
+.taskBody{
+    width: 73.6rem;
+    height: 7.2rem;
+    padding: 1.6rem;
+
+    background-color: var(--gray-500);
+    border-radius: 8px;
+    border: 1px solid var(--gray-400);
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+}
+
+.taskBody + .taskBody{
+   margin-top: 1.6rem;
+
+}
+
+
+.taskBlock{
+    display: flex;
+    gap: 2rem;
+
+}
+
+.taskBody input{
+    width: 1.745rem;
+    height: 1.745rem;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    border-radius: 50%;
+    border: 2px solid var(--blue-500);
+    transition: 0.2s all linear;
+
+    cursor: pointer;
+}
+
+.taskBody input:hover{
+    border: 2px solid var(--blue-600);
+    background-color: rgba(0,99 ,191 , .3)
+   
+}
+
+.taskBody input:checked {
+    color: var(--gray-100);
+    background-color: var(--purple-400);
+    background-image: url("./assets/check.svg");
+    background-size: 1rem;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .taskBody input:checked + p{
+    text-decoration: line-through;
+    color: var(--gray-300);
+  }
+
+.taskBody p{
+    padding: 0 1.2rem 0 ;
+    overflow-wrap: break-word;
+    font-size: 1.4rem;
+    color: var(--gray-100);
+}
+
+.taskBody button{
+    background-color: var(--gray-500);
+    border: none;
+}
+
+.taskBody svg{
+    color: var(--gray-300);
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.taskBody svg:hover{
+    color: var(--red-500);
+}

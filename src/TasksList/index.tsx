@@ -1,6 +1,7 @@
-import { ClipboardText,PlusCircle} from "phosphor-react"
+import { ClipboardText,MaskSad,PlusCircle} from "phosphor-react"
 import { useState } from "react"
 import {Task} from '../Task/index'
+import { Done } from '../Done/index'
 import styles from './styles.module.css'
 
 export interface Todo{
@@ -38,6 +39,18 @@ export function TasksList(){
         return
     }
 
+    function renderDones(){
+        if(!checkedTodos.length){
+            return(
+            <div className={styles.noDones}>
+                <MaskSad size={60}/>
+                <p>Você não tem nenhuma tarefa feita</p>
+            </div>
+            )
+        }
+        return <strong>Suas tarefas Cumpridas!</strong>
+    }
+
     function insertNewTask(e:any){
         e.preventDefault()
         const newTodo ={
@@ -65,13 +78,22 @@ export function TasksList(){
         const itsAlreadyChecked = 
         checkedTodos.some(todo=>todo.id === todoToCheck.id)
 
+        const leftTodos = todos.filter(todo => todo.id !== todoToCheck.id)
+
         if(itsAlreadyChecked){
         const uncheckTodo = checkedTodos.filter(
             todo => todo.id !== todoToCheck.id)
             
-        return setCheckedTodos(uncheckTodo)
+            return (
+              setTodos([...todos,todoToCheck]),
+             setCheckedTodos(uncheckTodo)
+         )
         }
-        return setCheckedTodos([...checkedTodos,todoToCheck])
+        
+        return (
+            setTodos(leftTodos),
+            setCheckedTodos([...checkedTodos,todoToCheck])
+            )
     }
 
     function addTask({id,content, isChecked}:Todo){
@@ -84,7 +106,19 @@ export function TasksList(){
                 onCheckTodo={handleCheckTodo}
             />
             )
-        }
+    }
+
+    function doneTask({id,content, isChecked}:Todo){
+            return(  <Done 
+                  key={id}
+                  id={id}
+                  isChecked={isChecked}
+                  content={content}
+                  onDeleteTodo={deleteTodo}
+                  onCheckTodo={handleCheckTodo}
+              />
+              )
+    }
 
     return(
         <div className={styles.tasks}>
@@ -112,8 +146,16 @@ export function TasksList(){
             </p>
             </div>
             {renderTasks()}
-            <div className={styles.Todos}>
-            {todos.map(addTask)}
+            <div className={styles.todos}>
+                {todos.map(addTask)}
+            </div>
+            <div className={styles.dones}>
+                <div className={styles.doneList}>
+                {renderDones()}
+                 
+                </div>
+
+                {checkedTodos.map(doneTask)}
             </div>
         </div>
     )
