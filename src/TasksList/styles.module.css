@@ -1,0 +1,102 @@
+.tasks{
+    display: flex;
+    flex-direction: column;
+
+    width: 73.6rem;
+    margin:6.4rem auto 21.4rem;
+}
+
+.reports{
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin-bottom: 2.4rem;
+}
+
+.reports p{
+    display: flex;
+    align-items: center;
+    color: var(--purple-500);
+}
+
+.reports p:first-child {
+    color: var(--blue-500);
+}
+
+.reports p span{
+    padding: .2rem .65rem;
+    margin-left: .8rem;
+
+    color: var(--gray-200);
+    background-color: var(--gray-400);
+    border-radius: 8px;
+}
+
+.tasksList{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    color:var(--gray-300) ;
+    border-radius: 8px;
+    border-top: 1px solid var(--gray-400);
+    margin-bottom: 6.4rem;
+}
+
+.tasksList svg{
+    margin: 6.4rem 0 24.8rem;
+}
+
+.tasksList p,.tasksList strong{
+    font-size: 1.6rem;
+    line-height: 1.4;
+}
+
+.inputField {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:0.8rem;
+    margin-bottom: 6.4rem;
+    margin-top: -9rem;
+}
+
+
+.inputField input{
+    width: 63.8rem;
+    height: 5.4rem;
+
+    background-color: var(--gray-500);
+    border:1px solid var(--gray-700);
+    border-radius: 8px;
+
+    color: var(--gray-100);
+    padding: 1.6rem;
+    font-size: 1.6rem;
+}
+
+.inputField input::placeholder{
+    font: 400 1.6rem 'Inter', sans-serife ;
+}
+
+.inputField button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .8rem;
+
+    width: 9rem;
+    height: 5.2rem;
+
+    background-color: var(--blue-600);
+    color: var(--gray-100);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color ease 0.3s;
+}
+
+.inputField button:hover{
+    background-color: var(--blue-500);
+}
