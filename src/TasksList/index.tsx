@@ -2,6 +2,8 @@ import { ClipboardText,MaskSad,PlusCircle} from "phosphor-react"
 import { useState } from "react"
 import {Task} from '../Task/index'
 import { Done } from '../Done/index'
+import {db} from '../../firebase'
+import { collection,getDocs,doc, onSnapshot } from "firebase/firestore"
 import styles from './styles.module.css'
 
 export interface Todo{
@@ -10,22 +12,17 @@ export interface Todo{
     isChecked:boolean
 }
 
-
 export function TasksList(){
-    const [todos,setTodos] = useState<Todo[]>([
-         {
-            id:1,
-            content:'Lavar Louça',
-            isChecked:false
-          },
-          {
-            id:2,
-            content:'Estudar React',
-            isChecked:false
-          }
-    ])
+    const [todos,setTodos] = useState<Todo[]>([])
     const [newTask, setNewTask] = useState('')
     const [checkedTodos,setCheckedTodos] = useState<Todo[]>([])
+
+    onSnapshot(collection(db,"todos"),
+        ({docs}) => {
+            const storedTodos:Todo[] = []
+            docs.forEach(doc => storedTodos.push(doc.data() as Todo))
+            setTodos(storedTodos)
+        })
 
     function renderTasks(){
         if(!todos.length){
