@@ -3,12 +3,12 @@ import { useState } from "react"
 import {Task} from '../Task/index'
 import { Done } from '../Done/index'
 import {db , todosCollection} from '../../firebase'
-import {collection, getDocs, doc, onSnapshot, addDoc } from "firebase/firestore"
+import {collection, query, onSnapshot, addDoc, getDocs, where, doc, deleteDoc } from "firebase/firestore"
 import {v4 as uuidv4} from 'uuid'
 import styles from './styles.module.css'
 
 export interface Todo{
-    id:number
+    id:string
     content:string
     isChecked:boolean
 }
@@ -24,11 +24,14 @@ export function TasksList(){
     const [checkedTodos,setCheckedTodos] = useState<Todo[]>([])
 
     onSnapshot(collection(db,"todos"),
-        ({docs}) => {
-            const storedTodos:Todo[] = []
-            docs.forEach(doc => storedTodos.push(doc.data() as Todo))
-            setTodos(storedTodos)
-        })
+        ({docs}) => setTodos(
+            docs.map((doc) => (
+                {
+                    id: doc.id, 
+                    content: doc.data().content, 
+                    isChecked: doc.data().isChecked
+                }
+                ))))
 
     function renderTasks(){
         if(!todos.length){
@@ -60,6 +63,7 @@ export function TasksList(){
             content:content,
             isChecked:false
         })
+        
     )
     console.log(`Todo adicionada, id: ${result.id}`)
     error && console.log(error)
@@ -75,12 +79,13 @@ export function TasksList(){
        setNewTask(e.target.value)
     }
 
-    function deleteTodo(todoToDelete:string){
-        const deleteTodo = todos.filter(todo => todo.content !== todoToDelete)
-        const deleteCheckedTodo = checkedTodos.filter(
-            todo => todo.content !== todoToDelete)
-        setTodos(deleteTodo)
-        setCheckedTodos(deleteCheckedTodo)
+    async function deleteFirebaseTodo(){
+        
+    }
+
+    async function deleteTodo(todoId:string){
+        const todoDoc = doc(db,"todos",todoId)
+        await deleteDoc(todoDoc)
     }
 
     function handleCheckTodo(todoToCheck:Todo){

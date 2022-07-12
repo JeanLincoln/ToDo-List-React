@@ -3,7 +3,7 @@ import styles from './styles.module.css'
 import {Todo} from '../TasksList/index'
 
 interface Task{
-   id:number
+   id:string
    content:string
    isChecked:boolean
    onDeleteTodo:(todo:string)=>void
@@ -13,7 +13,7 @@ interface Task{
 export function Task({id,content,isChecked,onDeleteTodo,onCheckTodo}:Task){
 
     function handleDeleteTodo(){
-        return onDeleteTodo(content)
+        return onDeleteTodo(id)
     }
 
     function handleCheckInput(){
