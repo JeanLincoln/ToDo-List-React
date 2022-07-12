@@ -2,8 +2,9 @@ import { ClipboardText,MaskSad,PlusCircle} from "phosphor-react"
 import { useState } from "react"
 import {Task} from '../Task/index'
 import { Done } from '../Done/index'
-import {db} from '../../firebase'
-import { collection,getDocs,doc, onSnapshot } from "firebase/firestore"
+import {db , todosCollection} from '../../firebase'
+import {collection, getDocs, doc, onSnapshot, addDoc } from "firebase/firestore"
+import {v4 as uuidv4} from 'uuid'
 import styles from './styles.module.css'
 
 export interface Todo{
@@ -11,6 +12,11 @@ export interface Todo{
     content:string
     isChecked:boolean
 }
+
+
+
+const to = (promise:any) => 
+    promise.then((result:Todo) => [null,result]).catch((error:string) =>[error])
 
 export function TasksList(){
     const [todos,setTodos] = useState<Todo[]>([])
@@ -48,14 +54,20 @@ export function TasksList(){
         return <strong>Suas tarefas Cumpridas!</strong>
     }
 
+    async function sendTodoToFirestorage(content:string){
+        const [error,result] = await to(addDoc(todosCollection,{
+            id:uuidv4(),
+            content:content,
+            isChecked:false
+        })
+    )
+    console.log(`Todo adicionada, id: ${result.id}`)
+    error && console.log(error)
+    }
+
     function insertNewTask(e:any){
         e.preventDefault()
-        const newTodo ={
-            id:Math.floor(Math.random()*50),
-            content: newTask,
-            isChecked:false
-        }
-        setTodos([...todos, newTodo])
+        sendTodoToFirestorage(newTask)
         setNewTask('')
     }
 
