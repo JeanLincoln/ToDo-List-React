@@ -79,10 +79,6 @@ export function TasksList(){
        setNewTask(e.target.value)
     }
 
-    async function deleteFirebaseTodo(){
-        
-    }
-
     async function deleteTodo(todoId:string){
         const todoDoc = doc(db,"todos",todoId)
         await deleteDoc(todoDoc)
