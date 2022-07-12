@@ -4,29 +4,29 @@ import { Todo } from '../TasksList/index'
 
 interface Task{
    id:number
-   todoText:string
+   content:string
    isChecked:boolean
    onDeleteTodo:(todo:string)=>void
    onCheckTodo:(todoId:Todo)=>void
 }
 
-export function Done({id,todoText,isChecked,onDeleteTodo,onCheckTodo}:Task){
+export function Done({id,content,isChecked,onDeleteTodo,onCheckTodo}:Task){
 
     function handleDeleteTodo(){
-        return onDeleteTodo(todoText)
+        return onDeleteTodo(content)
     }
 
     function handleCheckInput(){
-        return onCheckTodo({id,todoText,isChecked})
+        return onCheckTodo({id,content,isChecked})
     }
 
     return (
         <div className={styles.taskBody}>
             <div className={styles.taskBlock}> 
-            <label htmlFor={todoText}></label>
-            <input onChange={handleCheckInput} id={todoText} type="checkbox" checked/>
+            <label htmlFor={content}></label>
+            <input onChange={handleCheckInput} id={content} type="checkbox" checked/>
             <p className="taskText">
-                {todoText}
+                {content}
             </p>
             </div>
             <button onClick={handleDeleteTodo}>< Trash size={24}/></button>
