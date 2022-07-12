@@ -2,30 +2,31 @@ import { ClipboardText,MaskSad,PlusCircle} from "phosphor-react"
 import { useState } from "react"
 import {Task} from '../Task/index'
 import { Done } from '../Done/index'
+import { todosCollection} from "../env"
+import {onSnapshot } from "firebase/firestore";
 import styles from './styles.module.css'
 
 export interface Todo{
     id:number
-    content:string
+    todoText:string
     isChecked:boolean
 }
 
-
 export function TasksList(){
-    const [todos,setTodos] = useState<Todo[]>([
-         {
-            id:1,
-            content:'Lavar Louça',
-            isChecked:false
-          },
-          {
-            id:2,
-            content:'Estudar React',
-            isChecked:false
-          }
-    ])
+    const [todos,setTodos] = useState<Todo[]>([])
     const [newTask, setNewTask] = useState('')
     const [checkedTodos,setCheckedTodos] = useState<Todo[]>([])
+    const storedTodos:Todo[]=[]
+
+    const unsubscribe =  onSnapshot(todosCollection,(snapshot) => {
+        snapshot.docChanges().forEach(({ doc, type }) => {
+            const docData:Todo = doc.data()
+            storedTodos.push(docData)
+           
+        })
+        setTodos(storedTodos)
+    })   
+    
 
     function renderTasks(){
         if(!todos.length){
@@ -55,7 +56,7 @@ export function TasksList(){
         e.preventDefault()
         const newTodo ={
             id:Math.floor(Math.random()*50),
-            content: newTask,
+            todoText: newTask,
             isChecked:false
         }
         setTodos([...todos, newTodo])
@@ -67,9 +68,9 @@ export function TasksList(){
     }
 
     function deleteTodo(todoToDelete:string){
-        const deleteTodo = todos.filter(todo => todo.content !== todoToDelete)
+        const deleteTodo = todos.filter(todo => todo.todoText !== todoToDelete)
         const deleteCheckedTodo = checkedTodos.filter(
-            todo => todo.content !== todoToDelete)
+            todo => todo.todoText !== todoToDelete)
         setTodos(deleteTodo)
         setCheckedTodos(deleteCheckedTodo)
     }
@@ -96,24 +97,24 @@ export function TasksList(){
             )
     }
 
-    function addTask({id,content, isChecked}:Todo){
+    function addTask({id,todoText, isChecked}:Todo){
           return(  <Task 
                 key={id}
                 id={id}
                 isChecked={isChecked}
-                content={content}
+                todoText={todoText}
                 onDeleteTodo={deleteTodo}
                 onCheckTodo={handleCheckTodo}
             />
             )
     }
 
-    function doneTask({id,content, isChecked}:Todo){
+    function doneTask({id,todoText, isChecked}:Todo){
             return(  <Done 
                   key={id}
                   id={id}
                   isChecked={isChecked}
-                  content={content}
+                  todoText={todoText}
                   onDeleteTodo={deleteTodo}
                   onCheckTodo={handleCheckTodo}
               />
