@@ -1,9 +1,9 @@
 import { ClipboardText,MaskSad,PlusCircle} from "phosphor-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {Task} from '../Task/index'
 import { Done } from '../Done/index'
 import {db , todosCollection} from '../../firebase'
-import {collection, query, onSnapshot, addDoc, getDocs, where, doc, deleteDoc } from "firebase/firestore"
+import {addDoc, getDocs, doc, deleteDoc } from "firebase/firestore"
 import {v4 as uuidv4} from 'uuid'
 import styles from './styles.module.css'
 
@@ -13,8 +13,6 @@ export interface Todo{
     isChecked:boolean
 }
 
-
-
 const to = (promise:any) => 
     promise.then((result:Todo) => [null,result]).catch((error:string) =>[error])
 
@@ -23,15 +21,19 @@ export function TasksList(){
     const [newTask, setNewTask] = useState('')
     const [checkedTodos,setCheckedTodos] = useState<Todo[]>([])
 
-    onSnapshot(collection(db,"todos"),
-        ({docs}) => setTodos(
-            docs.map((doc) => (
+    useEffect(()=>{
+        const getTodos = async () => {
+            const data = await getDocs(todosCollection)
+            setTodos(data.docs.map((doc)=> (
                 {
-                    id: doc.id, 
-                    content: doc.data().content, 
-                    isChecked: doc.data().isChecked
+                id: doc.id, 
+                content: doc.data().content, 
+                isChecked: doc.data().isChecked
                 }
-                ))))
+            )))
+        }
+        getTodos()
+    },[todos])
 
     function renderTasks(){
         if(!todos.length){
@@ -86,7 +88,7 @@ export function TasksList(){
 
     function handleCheckTodo(todoToCheck:Todo){
         const itsAlreadyChecked = 
-        checkedTodos.some(todo=>todo.id === todoToCheck.id)
+        checkedTodos.some(todo => todo.id === todoToCheck.id)
 
         const leftTodos = todos.filter(todo => todo.id !== todoToCheck.id)
 
@@ -95,7 +97,7 @@ export function TasksList(){
             todo => todo.id !== todoToCheck.id)
             
             return (
-              setTodos([...todos,todoToCheck]),
+             setTodos([...todos,todoToCheck]),
              setCheckedTodos(uncheckTodo)
          )
         }
@@ -161,11 +163,9 @@ export function TasksList(){
             </div>
             <div className={styles.dones}>
                 <div className={styles.doneList}>
-                {renderDones()}
-                 
+                    {renderDones()} 
                 </div>
-
-                {checkedTodos.map(doneTask)}
+                    {checkedTodos.map(doneTask)}
             </div>
         </div>
     )
