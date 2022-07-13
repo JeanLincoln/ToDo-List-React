@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import {Task} from '../Task/index'
 import { Done } from '../Done/index'
 import {db , todosCollection} from '../../firebase'
-import {addDoc, getDocs, doc, deleteDoc } from "firebase/firestore"
+import {addDoc, getDocs, doc, deleteDoc, updateDoc } from "firebase/firestore"
 import {v4 as uuidv4} from 'uuid'
 import styles from './styles.module.css'
 
@@ -24,7 +24,16 @@ export function TasksList(){
     useEffect(()=>{
         const getTodos = async () => {
             const data = await getDocs(todosCollection)
-            setTodos(data.docs.map((doc)=> (
+            const unckedTodos = data.docs.filter(doc=>doc.data().isChecked === false)
+            const checkedTodos = data.docs.filter(doc=>doc.data().isChecked !== false)
+            setTodos(unckedTodos.map((doc)=> (
+                {
+                id: doc.id, 
+                content: doc.data().content, 
+                isChecked: doc.data().isChecked
+                }
+            )))
+            setCheckedTodos(checkedTodos.map((doc)=> (
                 {
                 id: doc.id, 
                 content: doc.data().content, 
@@ -86,26 +95,18 @@ export function TasksList(){
         await deleteDoc(todoDoc)
     }
 
-    function handleCheckTodo(todoToCheck:Todo){
-        const itsAlreadyChecked = 
-        checkedTodos.some(todo => todo.id === todoToCheck.id)
-
+    async function handleCheckTodo(todoToCheck:Todo){
+        const itsAlreadyChecked = todoToCheck.isChecked === true
+        const todoDocReference = doc(todosCollection,todoToCheck.id)
         const leftTodos = todos.filter(todo => todo.id !== todoToCheck.id)
-
-        if(itsAlreadyChecked){
-        const uncheckTodo = checkedTodos.filter(
-            todo => todo.id !== todoToCheck.id)
-            
-            return (
-             setTodos([...todos,todoToCheck]),
-             setCheckedTodos(uncheckTodo)
-         )
-        }
         
-        return (
-            setTodos(leftTodos),
-            setCheckedTodos([...checkedTodos,todoToCheck])
-            )
+        if(itsAlreadyChecked){
+          return await updateDoc(todoDocReference,{isChecked:false})
+        }
+
+        await updateDoc(todoDocReference,{isChecked:true})
+        setTodos(leftTodos)
+        setCheckedTodos([...checkedTodos,todoToCheck])
     }
 
     function addTask({id,content, isChecked}:Todo){
