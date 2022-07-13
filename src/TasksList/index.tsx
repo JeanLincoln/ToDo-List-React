@@ -1,4 +1,4 @@
-import { ClipboardText,MaskSad,PlusCircle} from "phosphor-react"
+import { ClipboardText,MaskSad,PlusCircle,MaskHappy} from "phosphor-react"
 import { useEffect, useState } from "react"
 import {Task} from '../Task/index'
 import { Done } from '../Done/index'
@@ -33,6 +33,15 @@ export function TasksList(){
                 isChecked: doc.data().isChecked
                 }
             )))
+
+        }
+        getTodos()
+    },[todos])
+
+    useEffect(()=>{
+        const getCheckedTodos = async () => {
+            const data = await getDocs(todosCollection)
+            const checkedTodos = data.docs.filter(doc=>doc.data().isChecked !== false)
             setCheckedTodos(checkedTodos.map((doc)=> (
                 {
                 id: doc.id, 
@@ -41,11 +50,11 @@ export function TasksList(){
                 }
             )))
         }
-        getTodos()
-    },[todos])
+        getCheckedTodos()
+    },[checkedTodos])
 
     function renderTasks(){
-        if(!todos.length){
+        if(!todos.length && !checkedTodos.length){
             return (
             <div className={styles.tasksList}>
                 <ClipboardText size={56}/>
@@ -53,7 +62,14 @@ export function TasksList(){
                 <p>Crie tarefas e organize seus itens a fazer</p>
             </div>)
         }
-        return
+        if(!todos.length && checkedTodos.length){
+        return(
+            <div className={styles.tasksList}>
+                <MaskHappy size={56}/>
+                <strong>Você completou todas as suas tarefas!</strong>
+                <p>Crie mais pelo campo "adicionar uma nova tarefa acima"</p>
+            </div>)
+        }
     }
 
     function renderDones(){

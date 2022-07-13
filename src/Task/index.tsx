@@ -1,6 +1,6 @@
 import { Trash } from 'phosphor-react'
 import styles from './styles.module.css'
-import {Todo} from '../TasksList/index'
+import { Todo } from '../TasksList/index'
 
 interface Task{
    id:string
